@@ -1,0 +1,651 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.app{display:flex;min-height:600px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary)}
+.sidebar{width:200px;min-width:200px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column}
+.sidebar-logo{padding:16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sidebar-logo .brand{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.sidebar-logo .sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.role-switcher{padding:10px}
+.role-switcher select{width:100%;font-size:12px;padding:6px 8px;border-radius:var(--border-radius-md)}
+.nav-section{padding:8px 10px 4px;font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 12px;font-size:13px;color:var(--color-text-secondary);cursor:pointer;border-radius:var(--border-radius-md);margin:1px 6px;transition:background .15s}
+.nav-item:hover{background:var(--color-background-primary)}
+.nav-item.active{background:var(--color-background-primary);color:var(--color-text-primary);font-weight:500}
+.nav-item i{font-size:16px;opacity:.7}
+.nav-item.active i{opacity:1}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.topbar{padding:12px 20px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-size:15px;font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500}
+.badge-info{background:var(--color-background-info);color:var(--color-text-info)}
+.badge-warn{background:var(--color-background-warning);color:var(--color-text-warning)}
+.badge-danger{background:var(--color-background-danger);color:var(--color-text-danger)}
+.badge-success{background:var(--color-background-success);color:var(--color-text-success)}
+.content{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
+.metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.metric-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.metric-value{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.metric-sub{font-size:11px;color:var(--color-text-secondary);margin-top:3px}
+.metric-danger .metric-value{color:var(--color-text-danger)}
+.metric-success .metric-value{color:var(--color-text-success)}
+.metric-warn .metric-value{color:var(--color-text-warning)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px}
+.card-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.invoice-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+.invoice-row:last-child{border-bottom:none}
+.inv-id{color:var(--color-text-secondary);font-size:12px}
+.inv-amount{font-weight:500}
+.aging-bar{display:flex;gap:2px;height:8px;border-radius:4px;overflow:hidden;margin-bottom:8px}
+.aging-seg{height:100%}
+.aging-legend{display:flex;gap:12px;font-size:11px;color:var(--color-text-secondary);flex-wrap:wrap}
+.legend-dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}
+.action-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-size:13px;border-radius:var(--border-radius-md);cursor:pointer;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);transition:background .15s}
+.action-btn:hover{background:var(--color-background-secondary)}
+.action-btn.primary{background:#185FA5;color:#fff;border-color:#185FA5}
+.action-btn.primary:hover{background:#0C447C;border-color:#0C447C}
+.action-btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.alert-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--border-radius-md);font-size:13px;background:var(--color-background-warning);color:var(--color-text-warning);border:0.5px solid var(--color-border-warning)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{padding:8px 10px;text-align:left;font-size:11px;font-weight:500;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);white-space:nowrap}
+td{padding:8px 10px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)}
+tr:last-child td{border-bottom:none}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+.pill-danger{background:var(--color-background-danger);color:var(--color-text-danger)}
+.pill-warn{background:var(--color-background-warning);color:var(--color-text-warning)}
+.pill-success{background:var(--color-background-success);color:var(--color-text-success)}
+.pill-info{background:var(--color-background-info);color:var(--color-text-info)}
+.flow-steps{display:flex;flex-direction:column;gap:0}
+.flow-step{display:flex;align-items:flex-start;gap:12px;padding:10px 0}
+.flow-step-num{width:28px;height:28px;min-width:28px;border-radius:50%;background:#185FA5;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500}
+.flow-step-body{flex:1}
+.flow-step-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.flow-step-desc{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+.flow-connector{width:28px;display:flex;justify-content:center;margin:-4px 0}
+.flow-connector i{font-size:14px;color:var(--color-text-tertiary)}
+.tab-row{display:flex;gap:4px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:16px}
+.tab{padding:8px 14px;font-size:13px;color:var(--color-text-secondary);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px}
+.tab.active{color:var(--color-text-primary);border-bottom-color:#185FA5;font-weight:500}
+</style>
+
+<h2 class="sr-only">ລະບົບ KCC ການຕິດຕາມໜີ້ ແລະ ການບໍລິການດ້ວຍຕົນເອງ — ສຳລັບ 3 ກຸ່ມຜູ້ໃຊ້: ພະນັກງານສົ່ງສິນຄ້າ, ເຈົ້າໜ້າທີ່ຕິດຕາມໜີ້, ແລະ ລູກຄ້າ/ຮ້ານຄ້າ</h2>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand"><i class="ti ti-building-bank" style="font-size:14px;margin-right:5px" aria-hidden="true"></i>KCC Platform</div>
+      <div class="sub">ລະບົບຕິດຕາມໜີ້ດິຈິຕອນ</div>
+    </div>
+    <div class="role-switcher">
+      <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:5px">ເບິ່ງໃນຖານະ</div>
+      <select id="roleSelect" onchange="switchRole(this.value)">
+        <option value="merchant">ລູກຄ້າ / ຮ້ານຄ້າ</option>
+        <option value="delivery">ພະນັກງານສົ່ງ &amp; ອອກໃບແຈ້ງໜີ້</option>
+        <option value="officer">ເຈົ້າໜ້າທີ່ຕິດຕາມໜີ້</option>
+        <option value="arch">ສະຖາປັດຕະຍະກຳລະບົບ</option>
+      </select>
+    </div>
+    <div id="nav"></div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="pageTitle">ໜ້າຫຼັກ</div>
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-top:2px" id="pageUser">ວຽງຈັນ ມາດ ຈຳກັດ · #MC-00421</div>
+      </div>
+      <div class="topbar-right">
+        <span class="badge badge-warn" id="roleTag">ຮ້ານຄ້າ</span>
+        <i class="ti ti-bell" style="font-size:18px;color:var(--color-text-secondary);cursor:pointer" aria-label="ການແຈ້ງເຕືອນ"></i>
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--color-background-info);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--color-text-info)" id="userAvatar">ວມ</div>
+      </div>
+    </div>
+    <div class="content" id="mainContent"></div>
+  </div>
+</div>
+
+<script>
+const roles = {
+  merchant: {
+    tag:'ຮ້ານຄ້າ', tagClass:'badge-info',
+    user:'ວຽງຈັນ ມາດ ຈຳກັດ · #MC-00421', avatar:'ວມ',
+    nav:[
+      {icon:'ti-layout-dashboard',label:'ໜ້າຫຼັກ',page:'merchantDash'},
+      {icon:'ti-file-invoice',label:'ໃບແຈ້ງໜີ້ຂອງຂ້ອຍ',page:'merchantInvoices'},
+      {icon:'ti-qrcode',label:'ຊຳລະໜີ້',page:'merchantPay'},
+      {icon:'ti-history',label:'ປະຫວັດການຈ່າຍ',page:'merchantHistory'},
+      {icon:'ti-download',label:'ດາວໂຫລດໃບສະຫຼຸບ',page:'merchantStatement'},
+    ]
+  },
+  delivery: {
+    tag:'ພະນັກງານສົ່ງ', tagClass:'badge-success',
+    user:'ພົງສະຫວັນ ກ. · ເຂດ: ວຽງຈັນເໜືອ', avatar:'ພກ',
+    nav:[
+      {icon:'ti-layout-dashboard',label:'ໜ້າຫຼັກ',page:'deliveryDash'},
+      {icon:'ti-truck',label:'ການສົ່ງວັນນີ້',page:'deliveries'},
+      {icon:'ti-file-plus',label:'ອອກໃບແຈ້ງໜີ້',page:'createInvoice'},
+      {icon:'ti-cash',label:'ເກັບເງິນ',page:'collectPayment'},
+      {icon:'ti-receipt',label:'ອອກໃບຮັບເງິນ',page:'issueReceipt'},
+    ]
+  },
+  officer: {
+    tag:'ເຈົ້າໜ້າທີ່ຕິດຕາມໜີ້', tagClass:'badge-warn',
+    user:'ຄຳລາ ສ. · ທີມ: AR ເໜືອ', avatar:'ຄສ',
+    nav:[
+      {icon:'ti-layout-dashboard',label:'ໜ້າຫຼັກ',page:'officerDash'},
+      {icon:'ti-alert-triangle',label:'ບັນຊີໝົດກຳນົດ',page:'overdueAccounts'},
+      {icon:'ti-chart-bar',label:'ລາຍງານ Aging',page:'agingReport'},
+      {icon:'ti-phone',label:'ຄະດີການເກັບໜີ້',page:'collectionCases'},
+      {icon:'ti-chart-line',label:'ຕິດຕາມ KPI',page:'kpiTracker'},
+    ]
+  },
+  arch: {
+    tag:'ຜູ້ດູແລລະບົບ', tagClass:'badge-info',
+    user:'ຜູ້ດູແລລະບົບ', avatar:'ຜດ',
+    nav:[
+      {icon:'ti-sitemap',label:'ສະຖາປັດຕະຍະກຳ',page:'archView'},
+      {icon:'ti-plug',label:'ເຊື່ອມຕໍ່ ERP',page:'erpIntegration'},
+      {icon:'ti-shield-lock',label:'ຄວາມປອດໄພ',page:'securityView'},
+      {icon:'ti-users',label:'ຈັດການຜູ້ໃຊ້',page:'userMgmt'},
+    ]
+  }
+};
+
+const pages = {
+  merchantDash: ()=>`
+    <div class="metric-row">
+      <div class="metric metric-danger"><div class="metric-label">ຍອດໜີ້ຄ້າງຊຳລະ</div><div class="metric-value">₭42.5M</div><div class="metric-sub">3 ໃບແຈ້ງໜີ້ຍັງຄ້າງ</div></div>
+      <div class="metric metric-warn"><div class="metric-label">ຄົບກຳນົດວັນນີ້</div><div class="metric-value">₭12.0M</div><div class="metric-sub">INV-2024-089</div></div>
+      <div class="metric metric-danger"><div class="metric-label">ເກີນກຳນົດ</div><div class="metric-value">₭8.5M</div><div class="metric-sub">ຊ້າ 15 ວັນ</div></div>
+      <div class="metric metric-success"><div class="metric-label">ວົງເງິນຄ້າຄົງ</div><div class="metric-value">₭50.0M</div><div class="metric-sub">ວົງເງິນທັງໝົດ: ₭100M</div></div>
+    </div>
+    <div class="alert-row"><i class="ti ti-alert-triangle" aria-hidden="true"></i> ໃບແຈ້ງໜີ້ INV-2024-082 ຊ້າກຳນົດ 15 ວັນ. ກະລຸນາຊຳລະເພື່ອຫຼີກເວັ້ນການຢຸດໃຫ້ບໍລິການ.</div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">ໃບແຈ້ງໜີ້ທີ່ຍັງຄ້າງ <span class="badge badge-warn">3 ລາຍການ</span></div>
+        <div class="invoice-row"><div><div style="font-size:13px;font-weight:500">INV-2024-089</div><div class="inv-id">ຄົບກຳນົດ: 24 ມິ.ຖ. 2026</div></div><div><div class="inv-amount">₭12.0M</div><span class="pill pill-warn">ຄົບກຳນົດວັນນີ້</span></div></div>
+        <div class="invoice-row"><div><div style="font-size:13px;font-weight:500">INV-2024-085</div><div class="inv-id">ຄົບກຳນົດ: 20 ມິ.ຖ. 2026</div></div><div><div class="inv-amount">₭22.0M</div><span class="pill pill-danger">ເກີນກຳນົດ</span></div></div>
+        <div class="invoice-row"><div><div style="font-size:13px;font-weight:500">INV-2024-082</div><div class="inv-id">ຄົບກຳນົດ: 09 ມິ.ຖ. 2026</div></div><div><div class="inv-amount">₭8.5M</div><span class="pill pill-danger">ຊ້າ 15 ວັນ</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">ດຳເນີນການດ່ວນ</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="action-btn primary" onclick="nav('merchantPay')"><i class="ti ti-qrcode" aria-hidden="true"></i> ຊຳລະທັນທີ</button>
+          <button class="action-btn" onclick="nav('merchantInvoices')"><i class="ti ti-file-invoice" aria-hidden="true"></i> ເບິ່ງໃບແຈ້ງໜີ້ທັງໝົດ</button>
+          <button class="action-btn" onclick="nav('merchantHistory')"><i class="ti ti-history" aria-hidden="true"></i> ປະຫວັດການຈ່າຍ</button>
+          <button class="action-btn" onclick="nav('merchantStatement')"><i class="ti ti-download" aria-hidden="true"></i> ດາວໂຫລດໃບສະຫຼຸບ</button>
+        </div>
+        <div style="margin-top:14px;padding-top:12px;border-top:0.5px solid var(--color-border-tertiary)">
+          <div class="card-title" style="margin-bottom:8px">ການຈ່າຍລ່າສຸດ</div>
+          <div style="font-size:13px;font-weight:500">₭18.0M</div>
+          <div style="font-size:12px;color:var(--color-text-secondary)">10 ມິ.ຖ. 2026 · ຊຳລະຜ່ານ QR</div>
+        </div>
+      </div>
+    </div>`,
+
+  merchantInvoices: ()=>`
+    <div class="tab-row">
+      <div class="tab active">ທັງໝົດ</div>
+      <div class="tab">ຍັງຄ້າງ</div>
+      <div class="tab">ຈ່າຍແລ້ວ</div>
+      <div class="tab">ເກີນກຳນົດ</div>
+    </div>
+    <div class="card">
+      <div class="card-title">ລາຍການໃບແຈ້ງໜີ້ <span style="font-size:12px;color:var(--color-text-secondary);font-weight:400">ສະແດງສະເພາະຂໍ້ມູນຂອງທ່ານ</span></div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>ເລກໃບແຈ້ງໜີ້</th><th>ວັນທີ</th><th>ວັນຄົບກຳນົດ</th><th>ຈຳນວນ</th><th>ສະຖານະ</th><th>ດຳເນີນການ</th></tr></thead>
+          <tbody>
+            <tr><td>INV-2024-089</td><td>10 ມິ.ຖ.</td><td>24 ມິ.ຖ.</td><td style="font-weight:500">₭12.0M</td><td><span class="pill pill-warn">ຄົບກຳນົດວັນນີ້</span></td><td><button class="action-btn" style="padding:4px 10px;font-size:12px" onclick="nav('merchantPay')">ຊຳລະທັນທີ</button></td></tr>
+            <tr><td>INV-2024-085</td><td>06 ມິ.ຖ.</td><td>20 ມິ.ຖ.</td><td style="font-weight:500">₭22.0M</td><td><span class="pill pill-danger">ເກີນກຳນົດ</span></td><td><button class="action-btn" style="padding:4px 10px;font-size:12px" onclick="nav('merchantPay')">ຊຳລະທັນທີ</button></td></tr>
+            <tr><td>INV-2024-082</td><td>25 ພ.ພ.</td><td>09 ມິ.ຖ.</td><td style="font-weight:500">₭8.5M</td><td><span class="pill pill-danger">ຊ້າ 15 ວັນ</span></td><td><button class="action-btn" style="padding:4px 10px;font-size:12px" onclick="nav('merchantPay')">ຊຳລະທັນທີ</button></td></tr>
+            <tr><td>INV-2024-078</td><td>15 ພ.ພ.</td><td>29 ພ.ພ.</td><td style="font-weight:500">₭18.0M</td><td><span class="pill pill-success">ຈ່າຍແລ້ວ</span></td><td><button class="action-btn" style="padding:4px 10px;font-size:12px"><i class="ti ti-download" aria-hidden="true"></i> ໃບຮັບເງິນ</button></td></tr>
+            <tr><td>INV-2024-071</td><td>01 ພ.ພ.</td><td>15 ພ.ພ.</td><td style="font-weight:500">₭11.5M</td><td><span class="pill pill-success">ຈ່າຍແລ້ວ</span></td><td><button class="action-btn" style="padding:4px 10px;font-size:12px"><i class="ti ti-download" aria-hidden="true"></i> ໃບຮັບເງິນ</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>`,
+
+  merchantPay: ()=>`
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">ເລືອກໃບແຈ້ງໜີ້ທີ່ຈະຊຳລະ</div>
+        <div class="invoice-row">
+          <div style="display:flex;align-items:center;gap:10px"><input type="checkbox" checked style="width:15px;height:15px"><div><div style="font-size:13px;font-weight:500">INV-2024-089</div><div class="inv-id">ຄົບກຳນົດວັນນີ້</div></div></div>
+          <div class="inv-amount">₭12.0M</div>
+        </div>
+        <div class="invoice-row">
+          <div style="display:flex;align-items:center;gap:10px"><input type="checkbox" style="width:15px;height:15px"><div><div style="font-size:13px;font-weight:500">INV-2024-085</div><div class="inv-id">ເກີນກຳນົດ</div></div></div>
+          <div class="inv-amount">₭22.0M</div>
+        </div>
+        <div class="invoice-row">
+          <div style="display:flex;align-items:center;gap:10px"><input type="checkbox" style="width:15px;height:15px"><div><div style="font-size:13px;font-weight:500">INV-2024-082</div><div class="inv-id">ຊ້າ 15 ວັນ</div></div></div>
+          <div class="inv-amount">₭8.5M</div>
+        </div>
+        <div style="margin-top:14px;padding-top:12px;border-top:0.5px solid var(--color-border-tertiary);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:13px;color:var(--color-text-secondary)">ຍອດລວມທີ່ເລືອກ</span>
+          <span style="font-size:18px;font-weight:500">₭12.0M</span>
+        </div>
+        <button class="action-btn primary" style="width:100%;justify-content:center;margin-top:10px"><i class="ti ti-qrcode" aria-hidden="true"></i> ສ້າງ QR ຊຳລະ</button>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:14px">
+        <div class="card-title" style="align-self:flex-start;width:100%">QR ແບບໄດນາມິກ — BCEL OnePay</div>
+        <div style="width:120px;height:120px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;border:0.5px solid var(--color-border-tertiary)">
+          <svg width="90" height="90" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="5" y="5" width="25" height="25" rx="2" fill="none" stroke="currentColor" stroke-width="3"/>
+            <rect x="11" y="11" width="13" height="13" rx="1" fill="currentColor"/>
+            <rect x="60" y="5" width="25" height="25" rx="2" fill="none" stroke="currentColor" stroke-width="3"/>
+            <rect x="66" y="11" width="13" height="13" rx="1" fill="currentColor"/>
+            <rect x="5" y="60" width="25" height="25" rx="2" fill="none" stroke="currentColor" stroke-width="3"/>
+            <rect x="11" y="66" width="13" height="13" rx="1" fill="currentColor"/>
+            <rect x="40" y="5" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="48" y="5" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="40" y="13" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="40" y="40" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="50" y="40" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="60" y="40" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="70" y="40" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="80" y="40" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="60" y="50" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="70" y="50" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="60" y="60" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="80" y="60" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="60" y="70" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="70" y="80" width="5" height="5" rx="1" fill="currentColor"/>
+            <rect x="80" y="70" width="5" height="5" rx="1" fill="currentColor"/>
+          </svg>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:18px;font-weight:500">₭12,000,000</div>
+          <div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">ວຽງຈັນ ມາດ ຈຳກັດ · INV-2024-089</div>
+          <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:3px">QR ໃຊ້ໄດ້ 15 ນາທີ</div>
+        </div>
+        <div style="display:flex;gap:8px;width:100%">
+          <button class="action-btn" style="flex:1;justify-content:center;font-size:12px"><i class="ti ti-download" aria-hidden="true"></i> ບັນທຶກ QR</button>
+          <button class="action-btn" style="flex:1;justify-content:center;font-size:12px"><i class="ti ti-share" aria-hidden="true"></i> ແບ່ງປັນ</button>
+        </div>
+      </div>
+    </div>`,
+
+  merchantHistory: ()=>`
+    <div class="metric-row">
+      <div class="metric"><div class="metric-label">ຈ່າຍທັງໝົດ (2026)</div><div class="metric-value">₭89.5M</div></div>
+      <div class="metric metric-success"><div class="metric-label">ຈ່າຍຕາມກຳນົດ</div><div class="metric-value">94%</div></div>
+      <div class="metric"><div class="metric-label">ສະເລ່ຍວັນທີ່ຈ່າຍ</div><div class="metric-value">8.2</div><div class="metric-sub">ວັນຫຼັງອອກໃບ</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">ປະຫວັດການຊຳລະ</div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>ວັນທີ</th><th>ເລກອ້າງອີງ</th><th>ໃບແຈ້ງໜີ້</th><th>ວິທີຊຳລະ</th><th>ຈຳນວນ</th><th>ສະຖານະ</th></tr></thead>
+          <tbody>
+            <tr><td>10 ມິ.ຖ. 2026</td><td>PAY-7821</td><td>INV-2024-078</td><td>QR / BCEL</td><td>₭18.0M</td><td><span class="pill pill-success">ຢືນຢັນແລ້ວ</span></td></tr>
+            <tr><td>28 ພ.ພ. 2026</td><td>PAY-7614</td><td>INV-2024-071</td><td>QR / BCEL</td><td>₭11.5M</td><td><span class="pill pill-success">ຢືນຢັນແລ້ວ</span></td></tr>
+            <tr><td>14 ພ.ພ. 2026</td><td>PAY-7410</td><td>INV-2024-065</td><td>ເງິນສົດ</td><td>₭22.0M</td><td><span class="pill pill-success">ຢືນຢັນແລ້ວ</span></td></tr>
+            <tr><td>30 ມ.ສ. 2026</td><td>PAY-7201</td><td>INV-2024-059</td><td>QR / BCEL</td><td>₭16.0M</td><td><span class="pill pill-success">ຢືນຢັນແລ້ວ</span></td></tr>
+            <tr><td>15 ມ.ສ. 2026</td><td>PAY-7089</td><td>INV-2024-051</td><td>ໂອນເງິນ</td><td>₭22.0M</td><td><span class="pill pill-success">ຢືນຢັນແລ້ວ</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>`,
+
+  merchantStatement: ()=>`
+    <div class="card">
+      <div class="card-title">ດາວໂຫລດໃບສະຫຼຸບບັນຊີ</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div><label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:5px">ຈາກວັນທີ</label><input type="date" value="2026-01-01" style="width:100%;font-size:13px"></div>
+        <div><label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:5px">ຫາວັນທີ</label><input type="date" value="2026-06-24" style="width:100%;font-size:13px"></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="action-btn primary"><i class="ti ti-file-type-pdf" aria-hidden="true"></i> ດາວໂຫລດ PDF</button>
+        <button class="action-btn"><i class="ti ti-table-export" aria-hidden="true"></i> ດາວໂຫລດ Excel</button>
+      </div>
+    </div>`,
+
+  deliveryDash: ()=>`
+    <div class="metric-row">
+      <div class="metric"><div class="metric-label">ການສົ່ງວັນນີ້</div><div class="metric-value">12</div><div class="metric-sub">ສຳເລັດ 6 ລາຍການ</div></div>
+      <div class="metric metric-success"><div class="metric-label">ເກັບໄດ້ວັນນີ້</div><div class="metric-value">₭34.5M</div></div>
+      <div class="metric"><div class="metric-label">ໃບແຈ້ງໜີ້ທີ່ອອກ</div><div class="metric-value">8</div></div>
+      <div class="metric metric-warn"><div class="metric-label">ຍັງເຫຼືອ</div><div class="metric-value">6</div><div class="metric-sub">ລາຍການ</div></div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">ເສັ້ນທາງວັນນີ້ — ວຽງຈັນເໜືອ</div>
+        ${['ຮ້ານພົງສະຫວັນ','KMK ການຄ້າ','ວຽງຈັນ ມາດ ຈຳກັດ','ຕະຫຼາດ Sunrise','ຮ້ານ Lao Garden','ຮ້ານໂພນທິບ'].map((c,i)=>`
+        <div class="invoice-row">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:22px;height:22px;border-radius:50%;background:${i<3?'var(--color-background-success)':'var(--color-background-secondary)'};display:flex;align-items:center;justify-content:center">
+              <i class="ti ${i<3?'ti-check':'ti-clock'}" style="font-size:12px;color:${i<3?'var(--color-text-success)':'var(--color-text-secondary)'}" aria-hidden="true"></i>
+            </div>
+            <span style="font-size:13px">${c}</span>
+          </div>
+          <span class="pill ${i<3?'pill-success':'pill-info'}">${i<3?'ສຳເລັດ':'ລໍຖ້າ'}</span>
+        </div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="card-title">ດຳເນີນການດ່ວນ</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="action-btn primary" onclick="nav('createInvoice')"><i class="ti ti-file-plus" aria-hidden="true"></i> ອອກໃບແຈ້ງໜີ້</button>
+          <button class="action-btn" onclick="nav('collectPayment')"><i class="ti ti-cash" aria-hidden="true"></i> ເກັບເງິນ</button>
+          <button class="action-btn" onclick="nav('issueReceipt')"><i class="ti ti-receipt" aria-hidden="true"></i> ອອກໃບຮັບເງິນ</button>
+        </div>
+      </div>
+    </div>`,
+
+  createInvoice: ()=>`
+    <div class="card">
+      <div class="card-title">ໃບແຈ້ງໜີ້ໃໝ່</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div><label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:5px">ລູກຄ້າ</label><select style="width:100%;font-size:13px"><option>ວຽງຈັນ ມາດ ຈຳກັດ</option><option>ຮ້ານພົງສະຫວັນ</option><option>KMK ການຄ້າ</option></select></div>
+        <div><label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:5px">ວັນທີໃບແຈ້ງໜີ້</label><input type="date" value="2026-06-24" style="width:100%;font-size:13px"></div>
+        <div><label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:5px">ວັນຄົບກຳນົດ</label><input type="date" value="2026-07-08" style="width:100%;font-size:13px"></div>
+        <div><label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:5px">ເງື່ອນໄຂການຊຳລະ</label><select style="width:100%;font-size:13px"><option>Net 14</option><option>Net 30</option><option>ຈ່າຍທັນທີ (COD)</option></select></div>
+      </div>
+      <div style="margin-top:14px">
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">ລາຍການສິນຄ້າ</div>
+        <table>
+          <thead><tr><th>ສິນຄ້າ</th><th>ຈຳນວນ</th><th>ລາຄາຕໍ່ໜ່ວຍ</th><th>ລວມ</th></tr></thead>
+          <tbody>
+            <tr><td><input type="text" value="ຖັງແກ໊ສ 48kg" style="width:100%;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:4px 8px"></td><td><input type="number" value="5" style="width:60px;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:4px 8px"></td><td><input type="text" value="₭1,200,000" style="width:100px;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:4px 8px"></td><td style="font-weight:500">₭6,000,000</td></tr>
+          </tbody>
+        </table>
+        <button class="action-btn" style="margin-top:8px;font-size:12px"><i class="ti ti-plus" aria-hidden="true"></i> ເພີ່ມລາຍການ</button>
+      </div>
+      <div style="margin-top:12px;text-align:right;font-size:15px;font-weight:500">ລວມທັງໝົດ: ₭6,000,000</div>
+      <div class="action-btn-row" style="margin-top:14px">
+        <button class="action-btn primary"><i class="ti ti-file-check" aria-hidden="true"></i> ບັນທຶກ &amp; ສົ່ງ ERP</button>
+        <button class="action-btn"><i class="ti ti-printer" aria-hidden="true"></i> ພິມ</button>
+        <button class="action-btn"><i class="ti ti-qrcode" aria-hidden="true"></i> ສ້າງ QR</button>
+      </div>
+    </div>`,
+
+  collectPayment: ()=>`
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">ເລືອກລູກຄ້າ &amp; ໃບແຈ້ງໜີ້</div>
+        <div style="margin-bottom:12px"><label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:5px">ລູກຄ້າ</label><select style="width:100%;font-size:13px"><option>ວຽງຈັນ ມາດ ຈຳກັດ</option></select></div>
+        <div class="invoice-row"><div style="display:flex;align-items:center;gap:10px"><input type="checkbox" checked><div><div style="font-size:13px;font-weight:500">INV-2024-089</div><div class="inv-id">₭12.0M · ຄົບກຳນົດວັນນີ້</div></div></div><span class="pill pill-warn">ຄົບກຳນົດ</span></div>
+        <div class="invoice-row"><div style="display:flex;align-items:center;gap:10px"><input type="checkbox"><div><div style="font-size:13px;font-weight:500">INV-2024-085</div><div class="inv-id">₭22.0M · ເກີນກຳນົດ</div></div></div><span class="pill pill-danger">ເກີນກຳນົດ</span></div>
+        <div style="margin-top:12px;font-size:13px;font-weight:500;text-align:right">ຈຳນວນທີ່ເກັບ: ₭12.0M</div>
+        <div style="margin-top:10px"><label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:5px">ວິທີຊຳລະ</label>
+          <select style="width:100%;font-size:13px"><option>QR / BCEL OnePay</option><option>ເງິນສົດ</option><option>ໂອນເງິນ</option></select>
+        </div>
+        <button class="action-btn primary" style="width:100%;justify-content:center;margin-top:12px"><i class="ti ti-qrcode" aria-hidden="true"></i> ສ້າງ QR ແລະ ເກັບເງິນ</button>
+      </div>
+      <div class="card">
+        <div class="card-title">ຂັ້ນຕອນການເກັບເງິນ</div>
+        <div class="flow-steps">
+          ${[['ເລືອກໃບແຈ້ງໜີ້','ເລືອກລາຍການທີ່ຕ້ອງການເກັບ'],['ສ້າງ QR','ສ້າງ QR ໄດນາມິກຜ່ານ Payment Gateway'],['ລູກຄ້າສະແກນ','ລູກຄ້າຈ່າຍຜ່ານ Mobile Banking'],['Matching ອັດຕະໂນມັດ','ລະບົບ Match ການຈ່າຍກັບໃບແຈ້ງໜີ້'],['ອອກໃບຮັບເງິນ','ພິມ ຫຼື ສົ່ງໃບຮັບເງິນດິຈິຕອນ'],['ອັບເດດ ERP','ໃບແຈ້ງໜີ້ຖືກໝາຍວ່າ "ຈ່າຍແລ້ວ" ທັນທີ']].map((s,i)=>`
+          <div class="flow-step">
+            <div class="flow-step-num">${i+1}</div>
+            <div class="flow-step-body"><div class="flow-step-title">${s[0]}</div><div class="flow-step-desc">${s[1]}</div></div>
+          </div>${i<5?'<div class="flow-connector"><i class="ti ti-arrow-narrow-down" aria-hidden="true"></i></div>':''}`).join('')}
+        </div>
+      </div>
+    </div>`,
+
+  issueReceipt: ()=>`
+    <div class="card" style="max-width:420px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:16px;font-weight:500">KCC — ໃບຮັບເງິນ</div>
+        <div style="font-size:12px;color:var(--color-text-secondary)">ເລກ #REC-2026-04821</div>
+      </div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;margin-bottom:14px">
+        <div class="invoice-row"><span style="color:var(--color-text-secondary);font-size:13px">ລູກຄ້າ</span><span style="font-weight:500">ວຽງຈັນ ມາດ ຈຳກັດ</span></div>
+        <div class="invoice-row"><span style="color:var(--color-text-secondary);font-size:13px">ໃບແຈ້ງໜີ້ #</span><span>INV-2024-089</span></div>
+        <div class="invoice-row"><span style="color:var(--color-text-secondary);font-size:13px">ວັນທີຊຳລະ</span><span>24 ມິ.ຖ. 2026</span></div>
+        <div class="invoice-row"><span style="color:var(--color-text-secondary);font-size:13px">ວິທີຊຳລະ</span><span>QR / BCEL OnePay</span></div>
+        <div class="invoice-row" style="border-bottom:none"><span style="color:var(--color-text-secondary);font-size:13px">ເກັບໂດຍ</span><span>ພົງສະຫວັນ ກ.</span></div>
+      </div>
+      <div style="font-size:22px;font-weight:500;text-align:center;margin-bottom:4px">₭12,000,000</div>
+      <div style="text-align:center;margin-bottom:16px"><span class="pill pill-success">ຢືນຢັນການຊຳລະແລ້ວ</span></div>
+      <div class="action-btn-row" style="justify-content:center">
+        <button class="action-btn primary"><i class="ti ti-printer" aria-hidden="true"></i> ພິມ</button>
+        <button class="action-btn"><i class="ti ti-mail" aria-hidden="true"></i> ອີເມລ</button>
+        <button class="action-btn"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> WhatsApp</button>
+      </div>
+    </div>`,
+
+  officerDash: ()=>`
+    <div class="metric-row">
+      <div class="metric metric-danger"><div class="metric-label">ໜີ້ເກີນກຳນົດທັງໝົດ</div><div class="metric-value">₭187M</div><div class="metric-sub">23 ບັນຊີ</div></div>
+      <div class="metric metric-warn"><div class="metric-label">ຄົບກຳນົດອາທິດນີ້</div><div class="metric-value">₭64M</div><div class="metric-sub">11 ໃບແຈ້ງໜີ້</div></div>
+      <div class="metric metric-success"><div class="metric-label">ເກັບໄດ້ (ມິ.ຖ.)</div><div class="metric-value">₭312M</div><div class="metric-sub">ເປົ້າໝາຍ: ₭350M</div></div>
+      <div class="metric"><div class="metric-label">ອັດຕາການເກັບ</div><div class="metric-value">89%</div></div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">ສະຫຼຸບ Aging</div>
+        <div style="margin-bottom:6px">
+          <div class="aging-bar">
+            <div class="aging-seg" style="flex:45;background:#185FA5"></div>
+            <div class="aging-seg" style="flex:25;background:#BA7517"></div>
+            <div class="aging-seg" style="flex:18;background:#E24B4A"></div>
+            <div class="aging-seg" style="flex:12;background:#A32D2D"></div>
+          </div>
+          <div class="aging-legend">
+            <span><span class="legend-dot" style="background:#185FA5"></span>0–30ວ (45%)</span>
+            <span><span class="legend-dot" style="background:#BA7517"></span>31–60ວ (25%)</span>
+            <span><span class="legend-dot" style="background:#E24B4A"></span>61–90ວ (18%)</span>
+            <span><span class="legend-dot" style="background:#A32D2D"></span>90ວ+ (12%)</span>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          ${[['0–30 ວັນ','₭84M','45%','pill-info'],['31–60 ວັນ','₭47M','25%','pill-warn'],['61–90 ວັນ','₭34M','18%','pill-danger'],['90 ວັນ+','₭22M','12%','pill-danger']].map(r=>`
+          <div class="invoice-row"><div><span style="font-size:13px">${r[0]}</span></div><div style="text-align:right"><span style="font-weight:500;margin-right:8px">${r[1]}</span><span class="pill ${r[3]}">${r[2]}</span></div></div>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">ບັນຊີທີ່ຄ້າງຊຳລະຫຼາຍທີ່ສຸດ</div>
+        ${[['ຕະຫຼາດ Sunrise','₭34.5M','45 ວັນ'],['KMK ການຄ້າ','₭28.0M','32 ວັນ'],['ຮ້ານໂພນທິບ','₭21.5M','28 ວັນ'],['Lao Garden','₭18.0M','22 ວັນ'],['ບໍລິສັດ ວັງວຽງ','₭15.0M','18 ວັນ']].map(a=>`
+        <div class="invoice-row">
+          <div>
+            <div style="font-size:13px;font-weight:500">${a[0]}</div>
+            <div class="inv-id">ເກີນກຳນົດ ${a[2]}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="inv-amount">${a[1]}</div>
+            <button class="action-btn" style="padding:3px 8px;font-size:11px;margin-top:3px"><i class="ti ti-phone" aria-hidden="true"></i> ຕິດຕາມ</button>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`,
+
+  agingReport: ()=>`
+    <div class="card">
+      <div class="card-title">ລາຍງານ Aging — ທີມ AR ເໜືອ</div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>ລູກຄ້າ</th><th>0–30ວ</th><th>31–60ວ</th><th>61–90ວ</th><th>90ວ+</th><th>ລວມ</th><th>ຄວາມສ່ຽງ</th></tr></thead>
+          <tbody>
+            ${[['ຕະຫຼາດ Sunrise','₭0','₭0','₭18.5M','₭16.0M','₭34.5M','danger'],
+               ['KMK ການຄ້າ','₭0','₭12.0M','₭16.0M','₭0','₭28.0M','warn'],
+               ['ຮ້ານໂພນທິບ','₭0','₭21.5M','₭0','₭0','₭21.5M','warn'],
+               ['Lao Garden','₭8.0M','₭10.0M','₭0','₭0','₭18.0M','info'],
+               ['ວຽງຈັນ ມາດ','₭12.0M','₭22.0M','₭8.5M','₭0','₭42.5M','danger']].map(r=>`
+            <tr><td style="font-weight:500">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td style="font-weight:500">${r[5]}</td><td><span class="pill pill-${r[6]}">${r[6]==='danger'?'ສູງ':r[6]==='warn'?'ກາງ':'ຕ່ຳ'}</span></td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`,
+
+  collectionCases: ()=>`
+    <div class="card">
+      <div class="card-title">ຄະດີການເກັບໜີ້ທີ່ກຳລັງດຳເນີນ <span class="badge badge-danger">8 ຄະດີ</span></div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>ເລກຄະດີ</th><th>ລູກຄ້າ</th><th>ຈຳນວນ</th><th>ວັນທີ່ຊ້າ</th><th>ດຳເນີນການລ່າສຸດ</th><th>ຂັ້ນຕອນຕໍ່ໄປ</th><th></th></tr></thead>
+          <tbody>
+            ${[['CC-0041','ຕະຫຼາດ Sunrise','₭34.5M','45','ໂທລະສັບ (15 ມິ.ຖ.)','ໜັງສືແຈ້ງ','danger'],
+               ['CC-0039','KMK ການຄ້າ','₭28.0M','32','ລົງພົບ (18 ມິ.ຖ.)','ແຜນຜ່ອນຊຳລະ','warn'],
+               ['CC-0038','ຮ້ານໂພນທິບ','₭21.5M','28','SMS (20 ມິ.ຖ.)','ໂທຕິດຕາມ','warn'],
+               ['CC-0035','Lao Garden','₭18.0M','22','ສົ່ງໃບແຈ້ງໜີ້','ລົງພົບໂດຍກົງ','info']].map(r=>`
+            <tr>
+              <td style="font-size:12px;color:var(--color-text-secondary)">${r[0]}</td>
+              <td style="font-weight:500">${r[1]}</td>
+              <td>${r[2]}</td>
+              <td><span class="pill pill-${r[6]}">${r[3]}ວ</span></td>
+              <td style="font-size:12px;color:var(--color-text-secondary)">${r[4]}</td>
+              <td style="font-size:12px">${r[5]}</td>
+              <td><button class="action-btn" style="padding:3px 8px;font-size:11px"><i class="ti ti-edit" aria-hidden="true"></i> ອັບເດດ</button></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`,
+
+  kpiTracker: ()=>`
+    <div class="metric-row">
+      <div class="metric"><div class="metric-label">ອັດຕາການເກັບ</div><div class="metric-value">89%</div><div class="metric-sub">ເປົ້າໝາຍ: 95%</div></div>
+      <div class="metric metric-success"><div class="metric-label">ຄະດີທີ່ປິດໄດ້</div><div class="metric-value">14</div><div class="metric-sub">ເດືອນນີ້</div></div>
+      <div class="metric"><div class="metric-label">ສະເລ່ຍວັນທີ່ເກັບ</div><div class="metric-value">18.4</div><div class="metric-sub">ວັນ</div></div>
+      <div class="metric metric-danger"><div class="metric-label">ຍົກລະດັບ</div><div class="metric-value">3</div><div class="metric-sub">ຄະດີເດືອນນີ້</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">ການເກັບລາຍເດືອນ vs ເປົ້າໝາຍ</div>
+      <div style="position:relative;width:100%;height:200px"><canvas id="kpiChart" role="img" aria-label="ກຣາຟສະແດງການເກັບໜີ້ປະຈຳເດືອນ ທຽບກັບເປົ້າໝາຍ ຕັ້ງແຕ່ ມ.ກ. ຫາ ມິ.ຖ. 2026">ຂໍ້ມູນການເກັບໜີ້ປະຈຳເດືອນ 2026.</canvas></div>
+    </div>`,
+
+  archView: ()=>`
+    <div class="card">
+      <div class="card-title">ສະຖາປັດຕະຍະກຳລະບົບ — 5 ຊັ້ນ</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        ${[
+          ['ຊັ້ນ Channel','ti-devices','#185FA5',['ແອັບໂທລະສັບ','ເວັບໂປຕານ','ແອັບພະນັກງານ','ໜ້າຜູ້ດູແລ']],
+          ['ຊັ້ນ Business','ti-building','#0F6E56',['ບໍລິການລູກຄ້າ','ບໍລິການໃບແຈ້ງໜີ້','ບໍລິການຕິດຕາມໜີ້','ບໍລິການຊຳລະ','ບໍລິການແຈ້ງເຕືອນ']],
+          ['ຊັ້ນ Integration','ti-plug','#854F0B',['API Gateway','Batch Engine','DB Connector']],
+          ['ຊັ້ນ Data','ti-database','#533AB7',['ຖານຂໍ້ມູນລູກຄ້າ','ຖານຂໍ້ມູນໃບແຈ້ງໜີ້','ຖານຂໍ້ມູນການຊຳລະ','ຖານຂໍ້ມູນການຕິດຕາມ','ບັນທຶກ Audit']],
+          ['ຊັ້ນ Analytics','ti-chart-bar','#A32D2D',['Dashboard ການເກັບ','Dashboard Aging','ຕິດຕາມ KPI','ຄາດການຄືນທຶນ']],
+        ].map(l=>`
+        <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <i class="ti ${l[1]}" style="font-size:16px;color:${l[2]}" aria-hidden="true"></i>
+            <span style="font-size:12px;font-weight:500;color:var(--color-text-primary)">${l[0]}</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            ${l[3].map(n=>`<div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:4px 10px;font-size:12px">${n}</div>`).join('')}
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`,
+
+  erpIntegration: ()=>`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      ${[
+        ['ທາງເລືອກ 1','ເຊື່ອມຕໍ່ API','ti-api','#185FA5','badge-info','ຮອງຮັບ SAP, Oracle, Dynamics, Odoo ຜ່ານ API Gateway. Real-Time ແລະ ປອດໄພ.'],
+        ['ທາງເລືອກ 2','ໄຟລ໌ Batch','ti-file-export','#BA7517','badge-warn','ໄຟລ໌ CSV/XML/Excel. ຄ່າໃຊ້ຈ່າຍຕ່ຳ ແຕ່ບໍ່ Real-Time.'],
+        ['ທາງເລືອກ 3','ເຊື່ອມ DB ໂດຍກົງ','ti-database','#A32D2D','badge-danger','ອ່ານ Replica ຂໍ້ມູນ. ໄວ ແຕ່ ມີຄວາມສ່ຽງດ້ານຄວາມປອດໄພ.'],
+      ].map((o,i)=>`
+      <div class="card" style="${i===0?'border:2px solid var(--color-border-info)':''}">
+        ${i===0?'<div class="badge badge-info" style="margin-bottom:8px;display:inline-block">ແນະນຳ</div>':''}
+        <i class="ti ${o[2]}" style="font-size:22px;color:${o[3]};display:block;margin-bottom:8px" aria-hidden="true"></i>
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px">${o[1]}</div>
+        <div style="font-size:12px;color:var(--color-text-secondary)">${o[5]}</div>
+      </div>`).join('')}
+    </div>`,
+
+  securityView: ()=>`
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">ການພິສູດຕົວຕົນ</div>
+        <div class="flow-steps">
+          ${[['ຊື່ຜູ້ໃຊ້ / ລະຫັດຜ່ານ','ຂໍ້ມູນໃຊ້ງານຫຼັກ'],['OTP ທາງ SMS','ລະຫັດຜ່ານຄັ້ງດຽວ'],['MFA (ທາງເລືອກ)','ແອັບ Authenticator']].map((s,i)=>`
+          <div class="flow-step">
+            <div class="flow-step-num" style="background:#0F6E56">${i+1}</div>
+            <div class="flow-step-body"><div class="flow-step-title">${s[0]}</div><div class="flow-step-desc">${s[1]}</div></div>
+          </div>${i<2?'<div class="flow-connector"><i class="ti ti-arrow-narrow-down" aria-hidden="true"></i></div>':''}`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">ການອະນຸຍາດ — RBAC</div>
+        ${[['ພະນັກງານສົ່ງ','ເບິ່ງລູກຄ້າທີ່ໄດ້ຮັບມອບໝາຍ, ອອກໃບແຈ້ງໜີ້, ເກັບເງິນ','success'],
+           ['ເຈົ້າໜ້າທີ່ຕິດຕາມໜີ້','ເບິ່ງໜີ້ຄ້າງ, ຕິດຕາມ, Dashboard','warn'],
+           ['ຮ້ານຄ້າ / ລູກຄ້າ','ເຫັນສະເພາະຂໍ້ມູນຂອງຕົນເອງ: ໃບແຈ້ງໜີ້, ການຈ່າຍ, QR','info']].map(r=>`
+        <div class="invoice-row">
+          <div>
+            <div style="font-size:13px;font-weight:500">${r[0]}</div>
+            <div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">${r[1]}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">ການ Audit ແລະ ການຈັດການຂໍ້ມູນ</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">
+        ${['ບັນທຶກການເຂົ້າສູ່ລະບົບ','ບັນທຶກການຊຳລະ','ບັນທຶກການເບິ່ງໃບແຈ້ງໜີ້','ປະຫວັດການປ່ຽນແປງ','ຈັດການ Merchant ID','ຄຸ້ມຄອງຂໍ້ມູນສ່ວນຕົວ'].map(a=>`
+        <div style="display:flex;align-items:center;gap:6px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:12px">
+          <i class="ti ti-check" style="font-size:14px;color:var(--color-text-success)" aria-hidden="true"></i>${a}</div>`).join('')}
+      </div>
+    </div>`,
+
+  userMgmt: ()=>`
+    <div class="card">
+      <div class="card-title">ຈັດການຜູ້ໃຊ້</div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>ຊື່</th><th>ບົດບາດ</th><th>ເຂດ</th><th>ເຂົ້າລ່າສຸດ</th><th>ສະຖານະ</th></tr></thead>
+          <tbody>
+            ${[['ພົງສະຫວັນ ກ.','ພະນັກງານສົ່ງ','ວຽງຈັນເໜືອ','24 ມິ.ຖ. 2026','success'],
+               ['ຄຳລາ ສ.','ເຈົ້າໜ້າທີ່ຕິດຕາມ','AR ເໜືອ','24 ມິ.ຖ. 2026','success'],
+               ['ສຸກສະຫວັນ ບ.','ພະນັກງານສົ່ງ','ວຽງຈັນໃຕ້','23 ມິ.ຖ. 2026','success'],
+               ['ມະນີຈັນ ທ.','ເຈົ້າໜ້າທີ່ຕິດຕາມ','AR ກາງ','22 ມິ.ຖ. 2026','warn'],
+               ['ວຽງຈັນ ມາດ','ຮ້ານຄ້າ','–','24 ມິ.ຖ. 2026','success']].map(u=>`
+            <tr>
+              <td style="font-weight:500">${u[0]}</td>
+              <td><span class="badge ${u[1]==='ຮ້ານຄ້າ'?'badge-info':u[1]==='ພະນັກງານສົ່ງ'?'badge-success':'badge-warn'}">${u[1]}</span></td>
+              <td style="font-size:12px;color:var(--color-text-secondary)">${u[2]}</td>
+              <td style="font-size:12px;color:var(--color-text-secondary)">${u[3]}</td>
+              <td><span class="pill ${u[4]==='success'?'pill-success':'pill-warn'}">${u[4]==='success'?'ໃຊ້ງານ':'ໄລ່ຍຸດ'}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`,
+
+  overdueAccounts: ()=>pages.agingReport(),
+  deliveries: ()=>pages.deliveryDash(),
+};
+
+function buildNav(role){
+  const r=roles[role];
+  const nav=document.getElementById('nav');
+  nav.innerHTML='<div class="nav-section">ເມນູ</div>'+r.nav.map((n,i)=>`<div class="nav-item${i===0?' active':''}" data-page="${n.page}" onclick="nav('${n.page}',this)"><i class="ti ${n.icon}" aria-hidden="true"></i>${n.label}</div>`).join('');
+}
+
+function nav(page,el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  else{const f=document.querySelector(`[data-page="${page}"]`);if(f)f.classList.add('active');}
+  const fn=pages[page];
+  document.getElementById('mainContent').innerHTML=fn?fn():'<div style="padding:20px;color:var(--color-text-secondary)">ບໍ່ພົບໜ້ານີ້.</div>';
+  const curRole=document.getElementById('roleSelect').value;
+  const titleMap={};
+  roles[curRole].nav.forEach(n=>{titleMap[n.page]=n.label;});
+  document.getElementById('pageTitle').textContent=titleMap[page]||page;
+  if(document.getElementById('kpiChart')){
+    setTimeout(()=>{
+      if(window.Chart){
+        new Chart(document.getElementById('kpiChart'),{type:'bar',data:{labels:['ມ.ກ.','ກ.ພ.','ມ.ນ.','ມ.ສ.','ພ.ພ.','ມິ.ຖ.'],datasets:[{label:'ເກັບໄດ້ (₭M)',data:[310,295,340,320,308,312],backgroundColor:'#185FA5'},{label:'ເປົ້າໝາຍ',data:[350,350,350,350,350,350],type:'line',borderColor:'#E24B4A',backgroundColor:'transparent',borderWidth:2,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'M'}}}}});
+      }
+    },100);
+  }
+}
+
+function switchRole(role){
+  const r=roles[role];
+  document.getElementById('roleTag').textContent=r.tag;
+  document.getElementById('roleTag').className='badge '+r.tagClass;
+  document.getElementById('pageUser').textContent=r.user;
+  document.getElementById('userAvatar').textContent=r.avatar;
+  buildNav(role);
+  nav(roles[role].nav[0].page,document.querySelector('.nav-item'));
+}
+
+buildNav('merchant');
+nav('merchantDash',document.querySelector('.nav-item'));
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
